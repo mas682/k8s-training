@@ -19,7 +19,9 @@ def simulate_health_check():
     while True:
         time.sleep(15 * flip_count)  # Simulate a delay of 1 minute
         health_check_failed = not health_check_failed
-        flip_count = 1
+        print(f"Health check flipped.  Failed: ${health_check_failed}")
+        flip_count += 1
+        print(f"Flip count: ${flip_count}")
 
 # Start the health check failure simulation in a separate thread
 thread = threading.Thread(target=simulate_health_check)

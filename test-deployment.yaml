@@ -36,8 +36,8 @@ spec:
           httpGet:
             path: /health
             port: 5000
-            periodSeconds: 1
-            failureThreshold: 45
+          periodSeconds: 1
+          failureThreshold: 45
         env:
         # secret option 1: expose via environment variable
         - name: TEST_SECRET
