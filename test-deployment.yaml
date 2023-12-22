@@ -11,7 +11,6 @@ spec:
       app: test-deployment
   template:
     metadata:
-      creationTimestamp: null
       labels:
         app: test-deployment
     spec:
@@ -21,3 +20,80 @@ spec:
         imagePullPolicy: Never
         ports:
         - containerPort: 5000
+        env:
+        # secret option 1: expose via environment variable
+        - name: TEST_SECRET
+          valueFrom:
+            secretKeyRef: 
+              name: my-secret
+              key: key1
+        # config option 1: add literally
+        - name: LITERAL_SECRET
+          value: surprise
+        # config option 2: read from config map
+        - name: CONFIGMAP_VALUE_1
+          valueFrom:
+            configMapKeyRef:
+              name: my-config
+              key: config1
+        volumeMounts:
+          # secert option 2: expose via a volume
+          - name: secret-volume
+            mountPath: /etc/secret-volume
+            readOnly: true
+          # config option 3: expose via a volume
+          - name: config-volume
+            mountPath: /etc/config
+          - name: test-volume
+            mountPath: /test
+          - name: repo-volume
+            mountPath: /repo
+      initContainers:
+        - name: init-test
+          image: busybox:latest
+          command: ['sh', '-c', 'for i in $(seq 0 10);do echo $i; sleep 1; done; echo The app is running!; echo We did it! > /test/output.txt']
+          volumeMounts:
+          - mountPath: /test
+            name: test-volume
+        - name: init-repo
+          image: alpine/git:latest
+          env:
+          - name: REPO
+            valueFrom:
+              configMapKeyRef:
+                name: git-config
+                key: repo
+          - name: USER
+            valueFrom:
+              configMapKeyRef:
+                name: git-config
+                key: username
+          - name: DESTINATION
+            valueFrom:
+              configMapKeyRef:
+                name: git-config
+                key: destination
+          - name: TOKEN
+            valueFrom:
+              secretKeyRef:
+                name: git-creds
+                key: token
+          command: ["/bin/sh", "-c", "git clone https://$USER:$TOKEN@github.com/$USER/$REPO.git $DESTINATION"]
+          volumeMounts:
+            - mountPath: /repo
+              name: repo-volume
+        
+
+      volumes:
+        - name: secret-volume
+          secret:
+            secretName: my-secret
+        - name: config-volume
+          configMap:
+            name: my-config  
+        - name: test-volume
+          emptyDir:
+            sizeLimit: 500Mi
+        - name: repo-volume
+          emptyDir:
+            sizeLimit: 500Mi

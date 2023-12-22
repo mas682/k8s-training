@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: git-config
+data:
+  username: mas682
+  repo: k8s-training
+  destination: /repo
