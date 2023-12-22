@@ -7,17 +7,17 @@ app = Flask(__name__)
 
 # Flag to indicate whether the health check should fail
 health_check_failed = True
-# Number of times health check flipped
-# used to test readiness checks and liveness probe
-flip_count = 0
 
 def simulate_health_check():
     global health_check_failed
+    # Number of times health check flipped
+    # used to test readiness checks and liveness probe
+    flip_count = 1
     time.sleep(30)
     # set to ready for startUp probe
     health_check_failed = not health_check_failed
     while True:
-        time.sleep(15 * flip_count)  # Simulate a delay of 1 minute
+        time.sleep(15 * flip_count)  # Simulate a delay
         health_check_failed = not health_check_failed
         print(f"Health check flipped.  Failed: ${health_check_failed}")
         flip_count += 1
