@@ -11,6 +11,7 @@ def hello():
 def health_check():
     # Perform any health check logic here
     # For simplicity, just return a JSON response indicating the application is healthy
+    
     return jsonify(status='ok', message='Health check passed')
 
 if __name__ == '__main__':
