@@ -1,4 +1,4 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, abort
 import os
 import threading
 import time
@@ -28,7 +28,7 @@ def health_check():
 
     # Check if the health check has failed
     if health_check_failed:
-        return jsonify(status='error', message='Health check failed after 1 minute')
+        abort(500, description='Health check failed after 1 minute')
 
     # For simplicity, just return a JSON response indicating the application is healthy
     return jsonify(status='ok', message='Health check passed')
