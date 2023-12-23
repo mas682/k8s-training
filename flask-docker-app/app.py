@@ -2,9 +2,10 @@ from flask import Flask, jsonify, abort
 import os
 import threading
 import time
+import socket
+import logging
 
 app = Flask(__name__)
-import logging
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -13,20 +14,35 @@ logger = logging.getLogger(__name__)
 # Flag to indicate whether the health check should fail
 health_check_failed = True
 
+
+def get_local_ip():
+    try:
+        # Create a socket to get the local IP address
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        s.connect(('8.8.8.8', 80))  # Connect to a known external server
+        local_ip = s.getsockname()[0]
+        s.close()
+        return local_ip
+    except Exception as e:
+        logger.error(f"Error getting local IP address: {e}")
+        return "UNKNOWN"
+
+
 def simulate_health_check():
     global health_check_failed
     # Number of times health check flipped
-    # used to test readiness checks and liveness probe
     flip_count = 1
     time.sleep(30)
     # set to ready for startUp probe
     health_check_failed = not health_check_failed
     while True:
-        time.sleep(15 * flip_count)  # Simulate a delay
+        # incrementing time so that livenessProbe fails eventually
+        sleep_time = 15 * flip_count
+        logger.info(f"Health check flipped.  Failed: {health_check_failed}")
+        logger.info(f"Sleep time: {sleep_time}")
+        time.sleep(sleep_time)  # Simulate a delay
         health_check_failed = not health_check_failed
-        logger.info(f"Health check flipped.  Failed: ${health_check_failed}")
         flip_count += 1
-        logger.info(f"Flip count: ${flip_count}")
 
 # Start the health check failure simulation in a separate thread
 thread = threading.Thread(target=simulate_health_check)
@@ -34,7 +50,13 @@ thread.start()
 
 @app.route('/')
 def hello():
-    return f'Hello, Dockerized Flask App! {os.environ.get("TEST_SECRET", "NOT FOUND")} {os.environ.get("LITERAL_SECRET", "NOT FOUND")}'
+    ip = get_local_ip()
+    return f'''
+        Hello, Dockerized Flask App!\n
+        IP: {ip}\n
+        Environment Variables: TEST_SECRET: {os.environ.get("TEST_SECRET", "NOT FOUND")} 
+        LITERAL_SECRET: {os.environ.get("LITERAL_SECRET", "NOT FOUND")}
+    '''
 
 @app.route('/health')
 def health_check():
