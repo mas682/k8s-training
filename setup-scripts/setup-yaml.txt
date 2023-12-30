@@ -1,0 +1,5 @@
+# file used to determine which yaml files must be executed when starting minikube
+test-secret.yaml
+test-configmap.yaml
+test-service.yaml
+config/git-configmap.yaml
