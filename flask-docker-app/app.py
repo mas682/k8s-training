@@ -47,6 +47,7 @@ def simulate_health_check():
 
 # Start the health check failure simulation in a separate thread
 fail_health_check = os.environ.get("FAIL_HEALTHCHECK", False)
+logger.info(f"Fail health check: {fail_health_check}")
 if not fail_health_check:
     health_check_failed = False
 else:

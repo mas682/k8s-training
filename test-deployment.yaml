@@ -48,7 +48,7 @@ spec:
         # config option 1: add literally
         - name: LITERAL_SECRET
           value: surprise
-        # Set to false to stop health check failures
+        # Set to False to stop health check failures, True to continue
         - name: FAIL_HEALTHCHECK
           value: "False"
         # config option 2: read from config map
