@@ -30,19 +30,22 @@ def get_local_ip():
 
 def simulate_health_check():
     global health_check_failed
-    # Number of times health check flipped
-    flip_count = 1
-    time.sleep(30)
-    # set to ready for startUp probe
-    health_check_failed = not health_check_failed
-    while True:
-        # incrementing time so that livenessProbe fails eventually
-        sleep_time = 15 * flip_count
-        logger.info(f"Health check flipped.  Failed: {health_check_failed}")
-        logger.info(f"Sleep time: {sleep_time}")
-        time.sleep(sleep_time)  # Simulate a delay
+
+    fail_health_check = os.environ.get("FAIL_HEALTHCHECK", False)
+    if(fail_health_check):
+        # Number of times health check flipped
+        flip_count = 1
+        time.sleep(30)
+        # set to ready for startUp probe
         health_check_failed = not health_check_failed
-        flip_count += 1
+        while True:
+            # incrementing time so that livenessProbe fails eventually
+            sleep_time = 15 * flip_count
+            logger.info(f"Health check flipped.  Failed: {health_check_failed}")
+            logger.info(f"Sleep time: {sleep_time}")
+            time.sleep(sleep_time)  # Simulate a delay
+            health_check_failed = not health_check_failed
+            flip_count += 1
 
 # Start the health check failure simulation in a separate thread
 thread = threading.Thread(target=simulate_health_check)
