@@ -57,9 +57,11 @@ else:
 @app.route('/')
 def hello():
     ip = get_local_ip()
+    pod_name = socket.gethostname()
     return f'''
         Hello, Dockerized Flask App!\n
         IP: {ip}\n
+        Pod Name: {pod_name}\n
         Environment Variables: TEST_SECRET: {os.environ.get("TEST_SECRET", "NOT FOUND")} 
         LITERAL_SECRET: {os.environ.get("LITERAL_SECRET", "NOT FOUND")}
     '''
