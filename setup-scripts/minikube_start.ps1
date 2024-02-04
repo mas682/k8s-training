@@ -5,6 +5,8 @@ function Minikube-Start {
         [int]$minikubeNodes=2,
         [switch]$skipKubernetes=$false,
         [switch]$skipDockerRegistry=$false
+        [int]$cpus=2,
+        [string]$memory="2g"
     )
 
     function Get-ExecutionTime {
@@ -26,7 +28,7 @@ function Minikube-Start {
     {
         # minikube
         $time = Get-Date
-        Init-Minikube -nodes $minikubeNodes -addons @("registry") -wslpath "\\wsl.localhost\Ubuntu\root\" -skipDeletion $skipMinikubeDeletion
+        Init-Minikube -nodes $minikubeNodes -addons @("registry") -wslpath "\\wsl.localhost\Ubuntu\root\" -skipDeletion $skipMinikubeDeletion -cpus $cpus -memory $memory
         $minikube_time = Get-ExecutionTime -startTime $time -endTime $(Get-Date)
     }
 

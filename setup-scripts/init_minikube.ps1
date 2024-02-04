@@ -4,7 +4,9 @@
         [int]$nodes = 1,
         [array]$addons = @(),
         [string]$wslpath="\\wsl.localhost\Ubuntu\root\",
-        [bool]$skipDeletion=$false
+        [bool]$skipDeletion=$false,
+        [int]$cpus=2,
+        [string]$memory="2g"
     )
 
     # get minikube running
@@ -28,7 +30,7 @@
     }
 
     Write-Host "`nInitializing minikube..." -ForegroundColor Cyan
-    minikube start -p $profile --nodes=$nodes
+    minikube start -p $profile --nodes=$nodes --cpus=$cpus ==memory=$memory
     # addons
     # only needed if using local docker registry
     if($addons.Count -ge 1)
