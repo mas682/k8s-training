@@ -3,3 +3,8 @@ test-secret.yaml
 test-configmap.yaml
 test-service.yaml
 config/git-configmap.yaml
+database/database-configmap.yaml
+database/database-persistent-volume.yaml
+database/database-pvc.yaml
+database/test-database.yaml
+database/networking/database-external-service.yaml

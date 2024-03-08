@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: test-database
+  name: test-database
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: test-database
+  template:
+    metadata:
+      labels:
+        app: test-database
+    spec:
+      containers:
+        - image: postgres:latest
+          name: postgres
+          ports:
+            - containerPort: 5432
+          volumeMounts:
+          - name: data
+            mountPath: /var/lib/postgresql/data
+          env:
+          - name: POSTGRES_DB
+            valueFrom:
+              configMapKeyRef:
+                name: database-config
+                key: POSTGRES_DB
+          - name: POSTGRES_USER
+            valueFrom:
+              configMapKeyRef:
+                name: database-config
+                key: POSTGRES_USER
+          - name: POSTGRES_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: db-creds
+                key: key
+      volumes:
+      - name: data
+        persistentVolumeClaim:
+          claimName: database-pvc
+          

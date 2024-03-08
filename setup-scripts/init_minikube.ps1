@@ -4,7 +4,7 @@
         [int]$nodes = 1,
         [array]$addons = @(),
         [string]$wslpath="\\wsl.localhost\Ubuntu\root\",
-        [bool]$skipDeletion=$false,
+        [bool]$deleteMinikube=$false,
         [int]$cpus=2,
         [string]$memory="2g"
     )
@@ -22,7 +22,7 @@
     else
     {
         Write-Host "Minikube profile $profile found"  -ForegroundColor Cyan
-        if(-not $skipDeletion)
+        if($deleteMinikube)
         {
             Write-Host "Deleting profile..." -ForegroundColor Cyan
             minikube delete -p $profile

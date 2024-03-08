@@ -1,0 +1,5 @@
+In order to store you credentials in a secret, run this command:
+kubectl create secret generic db-creds --from-env-file=config/database-secret.env -o yaml --dry-run=client
+
+This assumes there is a file in config/database-secret.env that has token=...
+Not storing the secret manifest in the repo as I don't want to expose my access token
