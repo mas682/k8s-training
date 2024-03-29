@@ -7,6 +7,7 @@ function Minikube-Start {
         [switch]$startDockerRegistry=$false,
         [switch]$startDbForwarding=$false,
         [switch]$setAllFlagsTrue=$false,
+        [switch]$openTerminal=$False,
         [int]$minikubeNodes=2,
         [int]$cpus=2,
         [string]$memory="2g",
@@ -32,6 +33,7 @@ function Minikube-Start {
         $startKubernetes=$true
         $startDockerRegistry=$true
         $startDbForwarding=$true
+        $openTerminal=$true
     }
 
     $startTime = Get-Date
@@ -72,9 +74,12 @@ function Minikube-Start {
         $db_port_forwarding_time = Get-ExecutionTime -startTime $time -endTime $(Get-Date)
     }    
 
-    $path = "/home/k8s-training"
-    Write-Host "`nOpening Ubuntu terminal at path $path" -ForegroundColor Green
-    Invoke-Expression -Command "wt -w 0 new-tab -d $path -p Ubuntu"
+    if($openTerminal)
+    {
+        $path = "/home/k8s-training"
+        Write-Host "`nOpening Ubuntu terminal at path $path" -ForegroundColor Green
+        Invoke-Expression -Command "wt -w 0 new-tab -d $path -p Ubuntu"
+    }
 
     Write-Host "`nExecution times:" -ForegroundColor Green
     if($startDocker)
