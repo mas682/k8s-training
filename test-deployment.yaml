@@ -15,8 +15,10 @@ spec:
         app: test-deployment
     spec:
       containers:
-      - image: localhost:5000/flask-docker-app:latest
+      # - image: localhost:5000/python-image:latest
+      - image: python:latest
         name: nginx
+        command: ["sh", "-c", "cd /repo/flask-docker-app && pip install --no-cache-dir -r requirements.txt && python app.py"]
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 5000
@@ -70,12 +72,12 @@ spec:
           - name: repo-volume
             mountPath: /repo
       initContainers:
-        - name: init-test
-          image: busybox:latest
-          command: ['sh', '-c', 'for i in $(seq 0 10);do echo $i; sleep 1; done; echo The app is running!; echo We did it! > /test/output.txt']
-          volumeMounts:
-          - mountPath: /test
-            name: test-volume
+        # - name: init-test
+        #   image: busybox:latest
+        #   command: ['sh', '-c', 'for i in $(seq 0 10);do echo $i; sleep 1; done; echo The app is running!; echo We did it! > /test/output.txt']
+        #   volumeMounts:
+        #   - mountPath: /test
+        #     name: test-volume
         - name: init-repo
           image: ubuntu:latest
           env:

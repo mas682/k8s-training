@@ -6,9 +6,9 @@
 
     Write-Host "`nSetting up local docker registry..." -ForegroundColor Green
     # setup local docker registry
-    Write-Host "Building flask-docker-app image..." -ForegroundColor Cyan
+    Write-Host "Building python-image image..." -ForegroundColor Cyan
     cd $dockerFilePath
-    docker buildx build -t flask-docker-app:latest .
+    docker buildx build -t python-image:latest .
 
     Write-Host "`nMapping local computer to minikube vm..." -ForegroundColor Cyan
     wt -w 0 new-tab --title kube-port-forward PowerShell -NoExit -c {wsl -e bash -c "kubectl port-forward --namespace kube-system service/registry 5000:80"}
@@ -26,7 +26,7 @@
     sleep 10
 
     Write-Host "`nTagging image..." -ForegroundColor Cyan
-    docker tag flask-docker-app localhost:5000/flask-docker-app
+    docker tag python-image localhost:5000/python-image
     Write-Host "Pushing image..." -ForegroundColor Cyan
-    docker push localhost:5000/flask-docker-app
+    docker push localhost:5000/python-image
 }

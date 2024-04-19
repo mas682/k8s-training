@@ -1,0 +1,68 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: db-init
+spec:
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+      - image: python:latest
+        name: db-init
+        command: ["sh", "-c", "ls /repo/database"]
+        env:
+        - name: POSTGRES_USER
+          valueFrom:
+            configMapKeyRef:
+              name: database-config
+              key: POSTGRES_USER
+        - name: POSTGRES_DB
+          valueFrom:
+            configMapKeyRef:
+              name: database-config
+              key: POSTGRES_DB
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: db-creds
+              key: key
+        volumeMounts:
+        - name: db-init-repo-volume
+          mountPath: /repo
+      initContainers:
+      - name: init-repo
+        image: ubuntu:latest
+        env:
+        - name: REPO
+          valueFrom:
+            configMapKeyRef:
+              name: git-config
+              key: repo
+        - name: USER
+          valueFrom:
+            configMapKeyRef:
+              name: git-config
+              key: username
+        - name: DESTINATION
+          valueFrom:
+            configMapKeyRef:
+              name: git-config
+              key: destination
+        - name: TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: git-creds
+              key: token
+        command:
+        - bash
+        - -c
+        - |
+          apt-get update && apt-get install -y git
+          git clone https://$USER:$TOKEN@github.com/$USER/$REPO.git $DESTINATION
+        volumeMounts:
+        - mountPath: /repo
+          name: db-init-repo-volume 
+      volumes:
+      - name: db-init-repo-volume
+        emptyDir:
+          sizeLimit: 500Mi

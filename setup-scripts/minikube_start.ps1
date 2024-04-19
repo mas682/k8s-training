@@ -7,6 +7,7 @@ function Minikube-Start {
         [switch]$startDockerRegistry=$false,
         [switch]$startDbForwarding=$false,
         [switch]$setAllFlagsTrue=$false,
+        [switch]$setAllFlagsTrueDeleteMinikube=$false,
         [switch]$openTerminal=$False,
         [int]$minikubeNodes=2,
         [int]$cpus=2,
@@ -25,13 +26,16 @@ function Minikube-Start {
     }
 
 
-    if($setAllFlagsTrue)
+    if($setAllFlagsTrue -or $setAllFlagsTrueDeleteMinikube)
     {
         $startDocker=$true
         $startMinikube=$true
-        $deleteMinikube=$true
+        if($setAllFlagsTrueDeleteMinikube)
+        {
+            $deleteMinikube=$true
+        }
         $startKubernetes=$true
-        $startDockerRegistry=$true
+        # $startDockerRegistry=$true
         $startDbForwarding=$true
         $openTerminal=$true
     }
@@ -63,7 +67,7 @@ function Minikube-Start {
     if($startDockerRegistry)
     {
         $time = Get-Date
-        Docker-Registry-Setup -dockerFilePath "\\wsl.localhost\Ubuntu\home\k8s-training\flask-docker-app"
+        Docker-Registry-Setup -dockerFilePath "\\wsl.localhost\Ubuntu\home\k8s-training\docker"
         $registry_time = Get-ExecutionTime -startTime $time -endTime $(Get-Date)
     }
 
