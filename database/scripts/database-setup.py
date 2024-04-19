@@ -26,6 +26,16 @@ def getCredentials() -> Credentials:
     database = os.environ.get("POSTGRES_DB")
     return Credentials(dbname=database, user=db_user, password=db_password, host="localhost", port="5432")
 
+def connect(credentials: Credentials) -> psycopg2.extensions.connection:
+    conn = psycopg2.connect(
+        dbname=credentials.dbname,
+        user=credentials.user,
+        password=credentials.password,
+        host=credentials.host,
+        port=credentials.port
+    )
+    return conn
+
 def setupdb():
     # Connect to your PostgreSQL database
     conn = psycopg2.connect(
@@ -76,3 +86,6 @@ if __name__ == '__main__':
     print(credentials.dbname)
     print(credentials.user)
     print(credentials.password)
+    db_connection = connect(credentials)
+    db_connection.cursor().execute("SELECT * FROM sample_table")
+    print(db_connection.cursor().fetchall())
