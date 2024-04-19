@@ -9,7 +9,7 @@ spec:
       containers:
       - image: python:latest
         name: db-init
-        command: ["sh", "-c", "cd /repo/database/scripts && pip install --no-cache-dir -r requirements.txt && python db-init-job.yaml"]
+        command: ["sh", "-c", "cd /repo/database/scripts && pip install --no-cache-dir -r requirements.txt && python database-setup.py"]
         env:
         - name: POSTGRES_USER
           valueFrom:

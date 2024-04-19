@@ -2,13 +2,29 @@ import psycopg2
 from psycopg2 import sql
 import os
 
-def initdb():
+class Credentials:
+    def __init__(self, dbname: str, user: str, password: str, host: str, port: str):
+        """
+        Initializes a new instance of the Credentials class.
+
+        Args:
+            dbname (str): The name of the database.
+            user (str): The username for authentication.
+            password (str): The password for authentication.
+            host (str): The host address of the database.
+            port (str): The port number for the database connection.
+        """
+        self.dbname = dbname
+        self.user = user
+        self.password = password
+        self.host = host
+        self.port = port
+
+def getCredentials() -> Credentials:
     db_user = os.environ.get("POSTGRES_USER")
     db_password = os.environ.get("POSTGRES_PASSWORD")
     database = os.environ.get("POSTGRES_DB")
-    print(f"db_user: {db_user}")
-    print(f"db_password: {db_password}")
-    print(f"database: {database}")
+    return Credentials(dbname=database, user=db_user, password=db_password, host="localhost", port="5432")
 
 def setupdb():
     # Connect to your PostgreSQL database
@@ -56,4 +72,7 @@ def setupdb():
     conn.close()
 
 if __name__ == '__main__':
-    initdb()
+    credentials = getCredentials()
+    print(credentials.dbname)
+    print(credentials.user)
+    print(credentials.password)
