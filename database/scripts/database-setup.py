@@ -1,5 +1,4 @@
 import psycopg2
-from psycopg2 import sql
 import os
 
 class Credentials:
@@ -62,54 +61,17 @@ class DataBase:
         self.db_connection.commit()
         cursor.close()
         return result
+    
+    def create_or_insert(self, query: str) -> None:
+        cursor = self.db_connection.cursor()
+        cursor.execute(query)
+        self.db_connection.commit()
+        cursor.close()
 
     def check_if_table_exists(self, table_name: str) -> bool:
         return self.query(f"SELECT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = '{table_name}');") == "True"
 
-def setupdb():
-    # Connect to your PostgreSQL database
-    conn = psycopg2.connect(
-        dbname="",
-        user="",
-        password="",
-        host="",
-        port=""
-    )
 
-    # Create a cursor object using the cursor() method
-    cursor = conn.cursor()
-
-    # Create a table
-    create_table_query = """
-    CREATE TABLE IF NOT EXISTS sample_table (
-        id SERIAL PRIMARY KEY,
-        name VARCHAR(100),
-        age INT
-    )
-    """
-    cursor.execute(create_table_query)
-    print("Table created successfully")
-
-    # Sample data to insert into the table
-    sample_data = [
-        ('John', 30),
-        ('Alice', 25),
-        ('Bob', 35)
-    ]
-
-    # Insert sample data into the table
-    insert_query = sql.SQL("INSERT INTO sample_table (name, age) VALUES (%s, %s)")
-
-    for data in sample_data:
-        cursor.execute(insert_query, data)
-
-    # Commit changes
-    conn.commit()
-    print("Sample data inserted successfully")
-
-    # Close the cursor and connection
-    cursor.close()
-    conn.close()
 
 if __name__ == '__main__':
     db = DataBase(DataBase.getCredentials())
@@ -119,7 +81,7 @@ if __name__ == '__main__':
         print("Table exists")
     elif not result:
         print("Table does not exist")
-    else:
-        print("Something went wrong")
+        db.create_or_insert("CREATE TABLE sample_table (id SERIAL PRIMARY KEY, name VARCHAR(100), age INT)")
+        db.create_or_insert("INSERT INTO sample_table (name, age) VALUES ('John', 30), ('Alice', 25), ('Bob', 35)")
     
     db.disconnect()
