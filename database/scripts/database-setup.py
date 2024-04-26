@@ -28,15 +28,43 @@ def getCredentials() -> Credentials:
     db_port = os.environ.get("DB_PORT")
     return Credentials(dbname=database, user=db_user, password=db_password, host=db_host, port=db_port)
 
-def connect(credentials: Credentials) -> psycopg2.extensions.connection:
-    conn = psycopg2.connect(
-        dbname=credentials.dbname,
-        user=credentials.user,
-        password=credentials.password,
-        host=credentials.host,
-        port=credentials.port
-    )
-    return conn
+class DataBase:
+    def __init__(self, credentials: Credentials):
+        self.credentials = credentials
+        self.db_connection = None
+
+    
+    def getCredentials() -> Credentials:
+        db_user = os.environ.get("POSTGRES_USER")
+        db_password = os.environ.get("POSTGRES_PASSWORD")
+        database = os.environ.get("POSTGRES_DB")
+        db_host = os.environ.get("DB_HOST")
+        db_port = os.environ.get("DB_PORT")
+        return Credentials(dbname=database, user=db_user, password=db_password, host=db_host, port=db_port)
+
+    
+    def connect(self) -> None:
+        self.db_connection = psycopg2.connect(
+            dbname=self.credentials.dbname,
+            user=self.credentials.user,
+            password=self.credentials.password,
+            host=self.credentials.host,
+            port=self.credentials.port
+        )
+    
+    def query(self, query: str) -> list:
+        cursor = self.db_connection.cursor()
+        cursor.execute(query)
+        result = cursor.fetchall()
+        self.db_connection.commit()
+        cursor.close()
+        return result
+
+    def check_if_table_exists(self, table_name: str) -> bool:
+        result = self.query(f"SELECT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = '{table_name}');")
+        print(result[0][0])
+        output = result[0][0] == True
+        return output
 
 def setupdb():
     # Connect to your PostgreSQL database
@@ -84,11 +112,6 @@ def setupdb():
     conn.close()
 
 if __name__ == '__main__':
-    credentials = getCredentials()
-    print(credentials.dbname)
-    print(credentials.user)
-    print(credentials.password)
-    print(credentials.host)
-    db_connection = connect(credentials)
-    db_connection.cursor().execute("SELECT * FROM sample_table")
-    print(db_connection.cursor().fetchall())
+    db = DataBase(DataBase.getCredentials())
+    db.connect()
+    print(db.check_if_table_exists('sample_table'))
