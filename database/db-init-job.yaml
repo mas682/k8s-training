@@ -21,6 +21,16 @@ spec:
             configMapKeyRef:
               name: database-config
               key: POSTGRES_DB
+        - name: DB_HOST
+          valueFrom:
+            configMapKeyRef:
+              name: database-config
+              key: DB_HOST
+        - name: DB_PORT
+          valueFrom:
+            configMapKeyRef:
+              name: database-config
+              key: DB_PORT
         - name: POSTGRES_PASSWORD
           valueFrom:
             secretKeyRef:

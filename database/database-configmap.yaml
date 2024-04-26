@@ -5,3 +5,5 @@ metadata:
 data:
   POSTGRES_DB: test-app
   POSTGRES_USER: postgres
+  DB_HOST: db-internal-service
+  DB_PORT: "5432"
