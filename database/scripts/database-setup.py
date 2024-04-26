@@ -80,8 +80,13 @@ if __name__ == '__main__':
     if result:
         print("Table exists")
     elif not result:
-        print("Table does not exist")
+        print("Table does not exist, creating table with fake data...")
         db.create_or_insert("CREATE TABLE sample_table (id SERIAL PRIMARY KEY, name VARCHAR(100), age INT)")
         db.create_or_insert("INSERT INTO sample_table (name, age) VALUES ('John', 30), ('Alice', 25), ('Bob', 35)")
+        result = db.check_if_table_exists('sample_table')
+        if result:
+            print("Table created successfully")
+        else:
+            print("Table could not be found")
     
     db.disconnect()
