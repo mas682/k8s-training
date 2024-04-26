@@ -64,7 +64,7 @@ class DataBase:
         return result
 
     def check_if_table_exists(self, table_name: str) -> bool:
-        return self.query(f"SELECT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = '{table_name}');")
+        return self.query(f"SELECT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = '{table_name}');") == "True"
 
 def setupdb():
     # Connect to your PostgreSQL database
