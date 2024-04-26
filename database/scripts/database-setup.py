@@ -1,5 +1,6 @@
 import psycopg2
 import os
+from time import sleep
 
 class Credentials:
     def __init__(self, dbname: str, user: str, password: str, host: str, port: str):
@@ -43,13 +44,29 @@ class DataBase:
 
     
     def connect(self) -> None:
-        self.db_connection = psycopg2.connect(
-            dbname=self.credentials.dbname,
-            user=self.credentials.user,
-            password=self.credentials.password,
-            host=self.credentials.host,
-            port=self.credentials.port
-        )
+        attempts = 0
+        max_attempts = 5
+        sleep_time = 10
+        while attempts < max_attempts:
+            try:
+                self.db_connection = psycopg2.connect(
+                    dbname=self.credentials.dbname,
+                    user=self.credentials.user,
+                    password=self.credentials.password,
+                    host=self.credentials.host,
+                    port=self.credentials.port
+                )
+                break
+            except psycopg2.OperationalError:
+                attempts += 1
+                print(f"Failed to connect to database. Attempt {attempts}/{max_attempts}...")
+                if attempts < max_attempts:
+                    print(f"Sleeping for {sleep_time} seconds...")
+                    sleep(sleep_time)
+                else:
+                    print(f"Failed to connect to database after {max_attempts} attempts.")
+                    raise
+
 
     def disconnect(self) -> None:
         self.db_connection.close()
