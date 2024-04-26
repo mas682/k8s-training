@@ -51,6 +51,9 @@ class DataBase:
             host=self.credentials.host,
             port=self.credentials.port
         )
+
+    def disconnect(self) -> None:
+        self.db_connection.close()
     
     def query(self, query: str) -> list:
         cursor = self.db_connection.cursor()
@@ -61,10 +64,7 @@ class DataBase:
         return result
 
     def check_if_table_exists(self, table_name: str) -> bool:
-        result = self.query(f"SELECT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = '{table_name}');")
-        print(result[0][0])
-        output = result[0][0] == True
-        return output
+        return self.query(f"SELECT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = '{table_name}');")
 
 def setupdb():
     # Connect to your PostgreSQL database
@@ -114,4 +114,12 @@ def setupdb():
 if __name__ == '__main__':
     db = DataBase(DataBase.getCredentials())
     db.connect()
-    print(db.check_if_table_exists('sample_table'))
+    result = db.check_if_table_exists('sample_table')
+    if result:
+        print("Table exists")
+    elif not result:
+        print("Table does not exist")
+    else:
+        print("Something went wrong")
+    
+    db.disconnect()
