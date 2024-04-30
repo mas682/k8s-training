@@ -1,5 +1,6 @@
 import psycopg2
 import os
+import sys
 from time import sleep
 
 class Credentials:
@@ -62,6 +63,7 @@ class DataBase:
                 print(f"Failed to connect to database. Attempt {attempts}/{max_attempts}...")
                 if attempts < max_attempts:
                     print(f"Sleeping for {sleep_time} seconds...")
+                    sys.stdout.flush()
                     sleep(sleep_time)
                 else:
                     print(f"Failed to connect to database after {max_attempts} attempts.")
