@@ -95,7 +95,6 @@ class DataBase:
 if __name__ == '__main__':
     db = DataBase(DataBase.getCredentials())
     db.connect()
-    print(db.credentials.host)
     table_name = 'sample_table'
     result = db.check_if_table_exists(table_name)
     if result:
