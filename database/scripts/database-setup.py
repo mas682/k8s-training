@@ -88,7 +88,6 @@ class DataBase:
         cursor.close()
 
     def check_if_table_exists(self, table_name: str) -> bool:
-        result = self.query(f"SELECT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = '{table_name}');")
         return self.query(f"SELECT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = '{table_name}');")
 
 
@@ -96,6 +95,7 @@ class DataBase:
 if __name__ == '__main__':
     db = DataBase(DataBase.getCredentials())
     db.connect()
+    print(db.credentials.host)
     table_name = 'sample_table'
     result = db.check_if_table_exists(table_name)
     if result:
