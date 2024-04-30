@@ -28,7 +28,6 @@
             $name = $values[0]
             $file = $values[1]
             Write-Host "Creating the kubernetes secret $name from file: $file" -ForegroundColor Magenta
-            # wsl -e bash -c "cd $manifestPath; kubectl create secret generic $name --from-env-file=$file"
             $wslCommand = "bash -c 'cd $manifestPath; kubectl create secret generic $name --from-env-file=$file'"
             Invoke-WslCommand -wslCommand $wslCommand
         }

@@ -86,6 +86,8 @@ class DataBase:
         cursor.close()
 
     def check_if_table_exists(self, table_name: str) -> bool:
+        result = self.query(f"SELECT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = '{table_name}');")
+        print(f"Result: {result}")
         return self.query(f"SELECT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = '{table_name}');") == "True"
 
 
@@ -93,14 +95,15 @@ class DataBase:
 if __name__ == '__main__':
     db = DataBase(DataBase.getCredentials())
     db.connect()
-    result = db.check_if_table_exists('sample_table')
+    table_name = 'sample_table'
+    result = db.check_if_table_exists(table_name)
     if result:
         print("Table exists")
     elif not result:
         print("Table does not exist, creating table with fake data...")
-        db.create_or_insert("CREATE TABLE sample_table (id SERIAL PRIMARY KEY, name VARCHAR(100), age INT)")
-        db.create_or_insert("INSERT INTO sample_table (name, age) VALUES ('John', 30), ('Alice', 25), ('Bob', 35)")
-        result = db.check_if_table_exists('sample_table')
+        db.create_or_insert(f"CREATE TABLE {table_name} (id SERIAL PRIMARY KEY, name VARCHAR(100), age INT)")
+        db.create_or_insert(f"INSERT INTO {table_name} (name, age) VALUES ('John', 30), ('Alice', 25), ('Bob', 35)")
+        result = db.check_if_table_exists(table_name)
         if result:
             print("Table created successfully")
         else:
