@@ -19,7 +19,7 @@ db-external-service:service:false:database/networking/database-external-service.
 db-internal-service:service:false:database/networking/database-internal-service.yaml:default
 
 #* persistent volumes
-database-pv:PersistentVolume:false:database/volumnes/database-persistent-volume.yaml:default
+database-pv:PersistentVolume:false:database/volumes/database-persistent-volume.yaml:default
 
 #* persistent volume claims
 database-pvc:PersistentVolumeClaim:false:database/volumes/database-pvc.yaml:default

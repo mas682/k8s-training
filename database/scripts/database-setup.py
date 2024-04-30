@@ -74,7 +74,7 @@ class DataBase:
     def query(self, query: str) -> list:
         cursor = self.db_connection.cursor()
         cursor.execute(query)
-        result = cursor.fetchall()
+        result = cursor.fetchone()
         self.db_connection.commit()
         cursor.close()
         return result
