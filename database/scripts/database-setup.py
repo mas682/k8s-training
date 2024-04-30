@@ -71,13 +71,13 @@ class DataBase:
     def disconnect(self) -> None:
         self.db_connection.close()
     
-    def query(self, query: str) -> list:
+    def query(self, query: str) -> tuple:
         cursor = self.db_connection.cursor()
         cursor.execute(query)
         result = cursor.fetchone()
         self.db_connection.commit()
         cursor.close()
-        return result
+        return result[0]
     
     def create_or_insert(self, query: str) -> None:
         cursor = self.db_connection.cursor()
@@ -89,7 +89,7 @@ class DataBase:
         result = self.query(f"SELECT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = '{table_name}');")
         print(f"Result: {result}")
         print(type(result))
-        return self.query(f"SELECT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = '{table_name}');") == "True"
+        return self.query(f"SELECT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = '{table_name}');")
 
 
 
