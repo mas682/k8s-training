@@ -29,7 +29,7 @@ class DataBase:
 
     
     @classmethod
-    def getCredentials() -> Credentials:
+    def getCredentials(cls) -> Credentials:
         db_user = os.environ.get("POSTGRES_USER")
         db_password = os.environ.get("POSTGRES_PASSWORD")
         database = os.environ.get("POSTGRES_DB")
