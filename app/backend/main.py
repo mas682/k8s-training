@@ -66,7 +66,7 @@ def health_check():
     return jsonify(status='ok', message='Health check passed')
 
 @app.route('/test_connection')
-def hello():
+def test_connection():
     ip = get_local_ip()
     pod_name = socket.gethostname()
     result = db.query("SELECT * FROM sample_table")
