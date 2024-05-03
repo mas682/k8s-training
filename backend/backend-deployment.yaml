@@ -17,7 +17,7 @@ spec:
       containers:
       - image: python:latest
         name: nginx
-        command: ["sh", "-c", "cd /repo/backend-service/code && pip install --no-cache-dir -r requirements.txt && python backend.py"]
+        command: ["sh", "-c", "cd /repo/code && pip install --no-cache-dir -r requirements.txt && python backend/main.py"]
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 5000
@@ -43,6 +43,31 @@ spec:
         # Set to False to stop health check failures, True to continue
         - name: FAIL_HEALTHCHECK
           value: "False"
+        - name: POSTGRES_DB
+          valueFrom:
+            configMapKeyRef:
+              name: database-config
+              key: POSTGRES_DB
+        - name: POSTGRES_USER
+          valueFrom:
+            configMapKeyRef:
+              name: database-config
+              key: POSTGRES_USER
+        - name: DB_HOST
+          valueFrom:
+            configMapKeyRef:
+              name: database-config
+              key: DB_HOST
+        - name: DB_PORT
+          valueFrom:
+            configMapKeyRef:
+              name: database-config
+              key: DB_PORT
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: db-creds
+              key: key
         volumeMounts:
           - name: repo-volume
             mountPath: /repo
