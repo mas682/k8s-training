@@ -21,13 +21,6 @@ class Credentials:
         self.host = host
         self.port = port
 
-def getCredentials() -> Credentials:
-    db_user = os.environ.get("POSTGRES_USER")
-    db_password = os.environ.get("POSTGRES_PASSWORD")
-    database = os.environ.get("POSTGRES_DB")
-    db_host = os.environ.get("DB_HOST")
-    db_port = os.environ.get("DB_PORT")
-    return Credentials(dbname=database, user=db_user, password=db_password, host=db_host, port=db_port)
 
 class DataBase:
     def __init__(self, credentials: Credentials):
@@ -35,6 +28,7 @@ class DataBase:
         self.db_connection = None
 
     
+    @classmethod
     def getCredentials() -> Credentials:
         db_user = os.environ.get("POSTGRES_USER")
         db_password = os.environ.get("POSTGRES_PASSWORD")

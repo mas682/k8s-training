@@ -10,3 +10,6 @@ pip install -r app/requirements.txt
 
 run backend:
 python -m app.backend.main
+
+run databse setup:
+python -m app.database.database-setup

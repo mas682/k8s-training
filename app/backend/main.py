@@ -4,7 +4,7 @@ import threading
 import time
 import socket
 import logging
-from app.utils.database import getCredentials
+from app.utils.database import DataBase
 
 app = Flask(__name__)
 
@@ -65,8 +65,20 @@ def health_check():
     # For simplicity, just return a JSON response indicating the application is healthy
     return jsonify(status='ok', message='Health check passed')
 
+@app.route('/test_connection')
+def hello():
+    ip = get_local_ip()
+    pod_name = socket.gethostname()
+    result = db.query("SELECT * FROM sample_table")
+
+    return jsonify(
+        ip=ip,
+        pod_name=pod_name,
+        result=result
+    )
 
 
+db = None
 
 # Start the health check failure simulation in a separate thread
 fail_health_check = bool(os.environ.get("FAIL_HEALTHCHECK", "False") == "True")
@@ -78,6 +90,6 @@ else:
     thread.start()
 
 if __name__ == '__main__':
-    credentials = getCredentials()
-    print(credentials.dbname)
+    db = DataBase(DataBase.getCredentials())
+    db.connect()
     app.run(debug=True, host='0.0.0.0', port=5000)
