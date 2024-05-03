@@ -4,7 +4,7 @@ import threading
 import time
 import socket
 import logging
-from code.utils import database
+from code.utils.database import getCredentials
 
 app = Flask(__name__)
 
@@ -78,6 +78,6 @@ else:
     thread.start()
 
 if __name__ == '__main__':
-    credentials = database.getCredentials()
-    print(credentials.POSTGRES_DB)
+    credentials = getCredentials()
+    print(credentials.dbname)
     app.run(debug=True, host='0.0.0.0', port=5000)
