@@ -4,7 +4,7 @@ import threading
 import time
 import socket
 import logging
-from code.utils.database import getCredentials
+from app.utils.database import getCredentials
 
 app = Flask(__name__)
 
