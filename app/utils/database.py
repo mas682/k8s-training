@@ -70,10 +70,10 @@ class DataBase:
     def query(self, query: str) -> tuple:
         cursor = self.db_connection.cursor()
         cursor.execute(query)
-        result = cursor.fetchone()
+        result = cursor.fetchall()
         self.db_connection.commit()
         cursor.close()
-        return result[0]
+        return result
     
     def create_or_insert(self, query: str) -> None:
         cursor = self.db_connection.cursor()
