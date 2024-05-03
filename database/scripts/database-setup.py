@@ -110,3 +110,4 @@ if __name__ == '__main__':
             print("Table could not be found")
     
     db.disconnect()
+    sys.stdout.flush()

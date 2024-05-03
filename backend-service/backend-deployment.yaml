@@ -1,0 +1,85 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: backend
+  name: backend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      containers:
+      - image: python:latest
+        name: nginx
+        command: ["sh", "-c", "cd /repo/backend-service/code && pip install --no-cache-dir -r requirements.txt && python backend.py"]
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 5000
+        startupProbe:
+          httpGet:
+            path: /health
+            port: 5000
+          failureThreshold: 60
+          periodSeconds: 1
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 5000
+          periodSeconds: 1
+          initialDelaySeconds: 10
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 5000
+          periodSeconds: 1
+          failureThreshold: 90
+        env:
+        # Set to False to stop health check failures, True to continue
+        - name: FAIL_HEALTHCHECK
+          value: "False"
+        volumeMounts:
+          - name: repo-volume
+            mountPath: /repo
+      initContainers:
+        - name: init-repo
+          image: ubuntu:latest
+          env:
+          - name: REPO
+            valueFrom:
+              configMapKeyRef:
+                name: git-config
+                key: repo
+          - name: USER
+            valueFrom:
+              configMapKeyRef:
+                name: git-config
+                key: username
+          - name: DESTINATION
+            valueFrom:
+              configMapKeyRef:
+                name: git-config
+                key: destination
+          - name: TOKEN
+            valueFrom:
+              secretKeyRef:
+                name: git-creds
+                key: token
+          command:
+          - bash
+          - -c
+          - |
+            apt-get update && apt-get install -y git
+            git clone https://$USER:$TOKEN@github.com/$USER/$REPO.git $DESTINATION
+          volumeMounts:
+            - mountPath: /repo
+              name: repo-volume
+      volumes:
+        - name: repo-volume
+          emptyDir:
+            sizeLimit: 500Mi
