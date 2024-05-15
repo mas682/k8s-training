@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: frontend-external
+  name: frontend-external
+spec:
+  selector:
+    app: frontend
+  type: NodePort
+  ports:
+  - port: 5000
+    protocol: TCP
+    # map to the http-port of on the containers having the app: frontend label
+    targetPort: http-port

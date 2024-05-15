@@ -20,7 +20,8 @@ spec:
         command: ["sh", "-c", "cd /repo && pip install --no-cache-dir -r app/requirements.txt && python -m app.frontend.main"]
         imagePullPolicy: IfNotPresent
         ports:
-        - containerPort: 80
+        - containerPort: 5000
+          name: http-port
         env:
         # Set to False to stop health check failures, True to continue
         - name: FAIL_HEALTHCHECK
@@ -28,19 +29,19 @@ spec:
         startupProbe:
           httpGet:
             path: /health
-            port: 80
+            port: 5000
           failureThreshold: 60
           periodSeconds: 1
         readinessProbe:
           httpGet:
             path: /health
-            port: 80
+            port: 5000
           periodSeconds: 1
           initialDelaySeconds: 10
         livenessProbe:
           httpGet:
             path: /health
-            port: 80
+            port: 5000
           periodSeconds: 1
           failureThreshold: 90
         volumeMounts:
