@@ -31,13 +31,13 @@ spec:
             configMapKeyRef:
               key: BACKEND_HOST
               name: backend-config
-        # - name: BACKEND_PORT
-        #   valueFrom:
-        #     configMapKeyRef:
-        #       key: BACKEND_PORT
-        #       name: backend-config
         - name: BACKEND_PORT
-          value: "5000"
+          valueFrom:
+            configMapKeyRef:
+              key: BACKEND_PORT
+              name: backend-config
+        # - name: BACKEND_PORT
+        #   value: "5000"
         startupProbe:
           httpGet:
             path: /health
