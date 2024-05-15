@@ -49,7 +49,8 @@ class DataBase:
                     user=self.credentials.user,
                     password=self.credentials.password,
                     host=self.credentials.host,
-                    port=self.credentials.port
+                    port=self.credentials.port,
+                    connect_timeout=5
                 )
                 break
             except psycopg2.OperationalError:

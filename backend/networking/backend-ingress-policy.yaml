@@ -1,7 +1,7 @@
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
-  name: backend-frontend-ingress
+  name: backend-ingress
   namespace: default
 spec:
   podSelector:
@@ -13,7 +13,7 @@ spec:
   - from:
     - podSelector:
         matchLabels:
-          app: abc
+          app: frontend
     ports:
     - protocol: TCP
       port: 5000

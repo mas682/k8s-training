@@ -87,11 +87,11 @@ function Db-Port-Forwarding-Setup
     if($windowsPortClear -and $linuxPortClear)
     {
         Write-Host "`nMapping WSL2 port $dbWslPort to the database service port $dbServicePort exposed on the cluster" -ForegroundColor Cyan
-        Write-Host "kubectl port-forward service/db-service ${dbWslPort}:${dbServicePort}" -ForegroundColor Yellow
+        Write-Host "kubectl port-forward service/db-external ${dbWslPort}:${dbServicePort}" -ForegroundColor Yellow
         # set environment variables so bash can see the values
         $env:dbWslPort = $dbWslPort
         $env:dbServicePort = $dbServicePort
-        wt -w 0 new-tab --title db-port-forward PowerShell -NoExit -c "wsl -e bash -c 'kubectl port-forward service/db-service $env:dbWslPort\:$env:dbServicePort'"
+        wt -w 0 new-tab --title db-port-forward PowerShell -NoExit -c "wsl -e bash -c 'kubectl port-forward service/db-external $env:dbWslPort\:$env:dbServicePort'"
         wt -w 0 focus-tab --previous
         $sleepSeconds = 3
         Write-Host "Sleeping $sleepSeconds seconds to give windows time to see the new process..." -ForegroundColor Cyan

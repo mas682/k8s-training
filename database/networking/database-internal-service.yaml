@@ -1,11 +1,11 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: db-internal-service
+  name: db-internal
 spec:
   type: ClusterIP
   selector:
-    app: test-database
+    app: database
   ports:
   - port: 5432
     targetPort: 5432
