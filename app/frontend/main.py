@@ -81,7 +81,7 @@ def health_check():
 def test_backend_connection():
     backend_host = os.environ.get("BACKEND_HOST", "NOT FOUND")
     backend_port = os.environ.get("BACKEND_PORT", "NOT FOUND")
-    url = f"{backend_host}:{backend_port}"
+    url = f"{backend_host}:{backend_port}/"
 
     try:
         response = requests.get(url)
