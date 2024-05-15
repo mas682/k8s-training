@@ -83,7 +83,6 @@ class DataBase:
 
     def check_if_table_exists(self, table_name: str) -> bool:
         result = self.query(f"SELECT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = '{table_name}');")
-        print(result)
         if (len(result) > 0):
             return result[0][0]
         else:

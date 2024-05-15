@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - image: python:latest
-        name: nginx
+        name: backend
         command: ["sh", "-c", "cd /repo && pip install --no-cache-dir -r app/requirements.txt && python -m app.backend.main"]
         imagePullPolicy: IfNotPresent
         ports:
