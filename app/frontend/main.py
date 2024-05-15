@@ -4,6 +4,7 @@ import threading
 import time
 import socket
 import logging
+import requests
 
 app = Flask(__name__)
 
@@ -75,6 +76,24 @@ def health_check():
 
     # For simplicity, just return a JSON response indicating the application is healthy
     return jsonify(status='ok', message='Health check passed')
+
+@app.route('/test_backend_connection')
+def test_backend_connection():
+    backend_host = os.environ.get("BACKEND_HOST", "NOT FOUND")
+    backend_port = os.environ.get("BACKEND_PORT", "NOT FOUND")
+    url = f"{backend_host}:{backend_port}"
+
+    try:
+        response = requests.get(url)
+
+        if response.status_code == 200:
+            data = response.json()
+            return jsonify(data)
+        else:
+            return jsonify({'error': 'Failed to retrieve data from backend'}), 500
+
+    except requests.exceptions.RequestException as e:
+        return jsonify({'error': str(e)}), 500
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)

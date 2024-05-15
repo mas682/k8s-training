@@ -26,6 +26,16 @@ spec:
         # Set to False to stop health check failures, True to continue
         - name: FAIL_HEALTHCHECK
           value: "False"
+        - name: BACKEND_HOST
+          valueFrom:
+            configMapKeyRef:
+              key: BACKEND_HOST
+              name: backend-config
+        - name: BACKEND_PORT
+          valueFrom:
+            configMapKeyRef:
+              key: BACKEND_PORT
+              name: backend-config
         startupProbe:
           httpGet:
             path: /health
