@@ -36,8 +36,6 @@ spec:
             configMapKeyRef:
               key: BACKEND_PORT
               name: backend-config
-        # - name: BACKEND_PORT
-        #   value: "5000"
         startupProbe:
           httpGet:
             path: /health

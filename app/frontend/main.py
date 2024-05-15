@@ -84,7 +84,7 @@ def test_backend_connection():
     url = f"http://{backend_host}:{backend_port}/"
 
     try:
-        response = requests.get(url)
+        response = requests.get(url, timeout=5)
 
         if response.status_code == 200:
             data = response.json()

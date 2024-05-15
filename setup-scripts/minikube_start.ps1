@@ -53,7 +53,8 @@ function Minikube-Start {
     {
         # minikube
         $time = Get-Date
-        Init-Minikube -nodes $minikubeNodes -addons @("registry") -wslpath "\\wsl.localhost\Ubuntu\root\" -deleteMinikube $deleteMinikube -cpus $cpus -memory $memory
+        # -addons @("registry")
+        Init-Minikube -nodes $minikubeNodes -wslpath "\\wsl.localhost\Ubuntu\root\" -deleteMinikube $deleteMinikube -cpus $cpus -memory $memory
         $minikube_time = Get-ExecutionTime -startTime $time -endTime $(Get-Date)
     }
 

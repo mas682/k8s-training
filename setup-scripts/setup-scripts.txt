@@ -12,11 +12,14 @@ my-secret:secret:false:config/test-secret.yaml:default
 my-config:configmap:false:config/test-configmap.yaml:default
 git-config:configmap:false:config/git-configmap.yaml:default
 database-config:configmap:false:database/config/database-configmap.yaml:default
+backend-config:configmap:false:backend/config/backend-configmap.yaml:default
 
 #* services
 test-deployment-nginx:service:false:test-service.yaml:default
 db-external-service:service:false:database/networking/database-external-service.yaml:default
 db-internal-service:service:false:database/networking/database-internal-service.yaml:default
+backend-internal:service:false:backend/networking/backend-internal-service.yaml:default
+frontend-external:service:false:frontend/networking/frontend-external-service.yaml:default
 
 #* persistent volumes
 database-pv:PersistentVolume:false:database/volumes/database-persistent-volume.yaml:default
@@ -24,9 +27,14 @@ database-pv:PersistentVolume:false:database/volumes/database-persistent-volume.y
 #* persistent volume claims
 database-pvc:PersistentVolumeClaim:false:database/volumes/database-pvc.yaml:default
 
+#* network polices
+default-ingress:networkpolicy:false:networking/ingress-network-policy.yaml:default
+
 #* deployments
 #* this deployment assumes database-config, db-creds, database-pv, and database-pvc exist
 test-database:Deployment:false:database/test-database.yaml:default
+backend:Deployment:false:backend/backend-deployment.yaml:default
+frontend:Deployment:false:frontend/frontend-deployment.yaml:default
 
 #* jobs
 # this job assumes the database exists, database-config, db-creds, git-config

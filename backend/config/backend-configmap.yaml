@@ -4,4 +4,4 @@ metadata:
   name: backend-config
 data:
   BACKEND_HOST: backend-internal.default
-  BACKEND_PORT: http-internal-port
+  BACKEND_PORT: "5000"

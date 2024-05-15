@@ -30,7 +30,7 @@
     }
 
     Write-Host "`nInitializing minikube..." -ForegroundColor Cyan
-    minikube start -p $profile --nodes=$nodes --cpus=$cpus ==memory=$memory
+    minikube start -p $profile --nodes=$nodes --cpus=$cpus --memory=$memory --cni calico
     # addons
     # only needed if using local docker registry
     if($addons.Count -ge 1)
