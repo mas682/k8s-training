@@ -15,6 +15,7 @@ logger = logging.getLogger(__name__)
 # Flag to indicate whether the health check should fail
 health_check_failed = True
 app_ready = False
+db_connection_tries = 0
 
 def simulate_health_check():
     global health_check_failed
@@ -40,8 +41,10 @@ def connect_to_database():
     while True:
         if db.db_connection is None or db.db_connection.closed:
             try:
-                db.connect()
+                db.connect(max_attempts=3, sleep_time=1)
+                db_connection_tries = 0
             except Exception as e:
+                db_connection_tries = db_connection_tries + 1
                 logger.error(f"Error connecting to database: {e}")
 
 def get_local_ip():
@@ -73,7 +76,9 @@ def base():
 @app.route('/health')
 def health_check():
     connected = None if db is None or db.db_connection is None else not db.db_connection.closed
-    return jsonify(status='ok', message='Health check passed', db_connnect=connected)
+    if db_connection_tries > 2:
+        return jsonify(status='error', message='Failed to connect to database', db_connnected=connected), 500
+    return jsonify(status='ok', message='Health check passed', db_connnected=connected), 200
 
 
 @app.route('/readiness')

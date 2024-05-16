@@ -39,7 +39,7 @@ class DataBase:
         return Credentials(dbname=database, user=db_user, password=db_password, host=db_host, port=db_port)
 
     
-    def connect(self, max_attempts: int = 20) -> None:
+    def connect(self, max_attempts: int = 20, sleep_time: int = 5) -> None:
         attempts = 0
         sleep_time = 5
         while attempts < max_attempts:

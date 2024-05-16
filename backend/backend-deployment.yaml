@@ -38,7 +38,7 @@ spec:
             path: /health
             port: 5000
           periodSeconds: 1
-          failureThreshold: 90
+          failureThreshold: 30
         env:
         # Set to False to stop health check failures, True to continue
         - name: FAIL_HEALTHCHECK
