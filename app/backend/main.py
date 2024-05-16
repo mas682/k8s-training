@@ -62,8 +62,8 @@ def base():
 
 @app.route('/health')
 def health_check():
-    # For simplicity, just return a JSON response indicating the application is healthy
-    return jsonify(status='ok', message='Health check passed')
+    connected = None if db is None or db.db_connection is None else not db.db_connection.closed
+    return jsonify(status='ok', message='Health check passed', db_connnect=connected)
 
 
 @app.route('/readiness')

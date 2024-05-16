@@ -29,10 +29,10 @@ spec:
           periodSeconds: 1
         readinessProbe:
           httpGet:
-            path: /health
+            path: /readiness
             port: 5000
           periodSeconds: 1
-          initialDelaySeconds: 10
+          initialDelaySeconds: 0
         livenessProbe:
           httpGet:
             path: /health
