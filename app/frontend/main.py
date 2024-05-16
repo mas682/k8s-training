@@ -15,6 +15,8 @@ logger = logging.getLogger(__name__)
 # Flag to indicate whether the health check should fail
 health_check_failed = True
 
+app_ready = False
+
 
 def get_local_ip():
     try:
@@ -57,6 +59,9 @@ else:
 
 @app.route('/')
 def base():
+    global app_ready
+    if not app_ready:
+        return jsonify(error='Application not ready'), 500
     ip = get_local_ip()
     pod_name = socket.gethostname()
     return jsonify(
@@ -73,6 +78,7 @@ def health_check():
 
 @app.route('/readiness')
 def readiness_check():
+    global app_ready
     backend_host = os.environ.get("BACKEND_INTERNAL_SERVICE_HOST", "NOT FOUND")
     backend_port = os.environ.get("BACKEND_INTERNAL_SERVICE_PORT", "NOT FOUND")
     url = f"http://{backend_host}:{backend_port}/"
@@ -81,20 +87,28 @@ def readiness_check():
         response = requests.get(url, timeout=5)
 
         if response.status_code == 200:
+            app_ready = True
             return jsonify(status='ok', message='Readiness check passed')
         else:
+            app_ready = False
             return jsonify(status='error', message=f'Readiness check failed. Backend responsed with a {response.status_code} status'), 500
 
     except requests.exceptions.RequestException as e:
+        app_ready = False
         return jsonify(status='error', message=f"Readiness check failed. Error connecting to backend: {str(e)}"), 500
 
 
 @app.route('/test_backend_connection')
 def test_backend_connection():
+    global app_ready
+    if not app_ready:
+        return jsonify(error='Application not ready'), 500
+
     # using the _SERVICE_HOST environment variable is one option
     # one drawback to this is the service must be created first
     # if you use backend-internal.default instead, the dns lookup makes it so the service 
     # does not need to be created first
+    
     backend_host = os.environ.get("BACKEND_INTERNAL_SERVICE_HOST", "NOT FOUND")
     backend_port = os.environ.get("BACKEND_INTERNAL_SERVICE_PORT", "NOT FOUND")
     url = f"http://{backend_host}:{backend_port}/"
@@ -106,10 +120,10 @@ def test_backend_connection():
             data = response.json()
             return jsonify(data)
         else:
-            return jsonify({'error': 'Failed to retrieve data from backend'}), 500
+            return jsonify(error='Failed to retrieve data from backend'), 500
 
     except requests.exceptions.RequestException as e:
-        return jsonify({'error': str(e)}), 500
+        return jsonify(error=str(e)), 500
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)
