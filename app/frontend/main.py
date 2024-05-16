@@ -83,10 +83,10 @@ def readiness_check():
         if response.status_code == 200:
             return jsonify(status='ok', message='Health check passed')
         else:
-            return jsonify({'error': 'Backend could not be reached'}), 500
+            return jsonify(status='error', message=f'Backend responsed with a {response.status_code} status'), 500
 
     except requests.exceptions.RequestException as e:
-        return jsonify({'error': f"Error connecting to backend: {str(e)}"}), 500
+        return jsonify(status='error', message=f"Error connecting to backend: {str(e)}"), 500
 
 
 @app.route('/test_backend_connection')
