@@ -26,6 +26,7 @@ class DataBase:
     def __init__(self, credentials: Credentials):
         self.credentials = credentials
         self.db_connection = None
+        self.connected = False
 
     
     @classmethod
@@ -38,9 +39,8 @@ class DataBase:
         return Credentials(dbname=database, user=db_user, password=db_password, host=db_host, port=db_port)
 
     
-    def connect(self) -> None:
+    def connect(self, max_attempts: int = 20) -> None:
         attempts = 0
-        max_attempts = 20
         sleep_time = 5
         while attempts < max_attempts:
             try:
@@ -52,6 +52,7 @@ class DataBase:
                     port=self.credentials.port,
                     connect_timeout=5
                 )
+                self.connected = True
                 break
             except psycopg2.OperationalError:
                 attempts += 1

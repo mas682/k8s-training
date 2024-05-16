@@ -14,7 +14,6 @@ logger = logging.getLogger(__name__)
 
 # Flag to indicate whether the health check should fail
 health_check_failed = True
-
 app_ready = False
 
 
@@ -91,7 +90,7 @@ def readiness_check():
             return jsonify(status='ok', message='Readiness check passed')
         else:
             app_ready = False
-            return jsonify(status='error', message=f'Readiness check failed. Backend responsed with a {response.status_code} status'), 500
+            return jsonify(status='error', message=f'Readiness check failed. Backend responded with a {response.status_code} status'), 500
 
     except requests.exceptions.RequestException as e:
         app_ready = False
@@ -118,7 +117,7 @@ def test_backend_connection():
 
         if response.status_code == 200:
             data = response.json()
-            return jsonify(data)
+            return jsonify(backend_response=data)
         else:
             return jsonify(error='Failed to retrieve data from backend'), 500
 

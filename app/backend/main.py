@@ -14,6 +14,7 @@ logger = logging.getLogger(__name__)
 
 # Flag to indicate whether the health check should fail
 health_check_failed = True
+app_ready = False
 
 def simulate_health_check():
     global health_check_failed
@@ -45,8 +46,12 @@ def get_local_ip():
         logger.error(f"Error getting local IP address: {e}")
         return "UNKNOWN"
 
+
 @app.route('/')
-def hello():
+def base():
+    global app_ready
+    if not app_ready:
+        return jsonify(error='Application not ready'), 500
     ip = get_local_ip()
     pod_name = socket.gethostname()
     return jsonify(
@@ -54,26 +59,38 @@ def hello():
         pod_name=pod_name
     )
 
+
 @app.route('/health')
 def health_check():
-    global health_check_failed
-
-    # Check if the health check has failed
-    if health_check_failed:
-        abort(500, description='Health check failing')
-
     # For simplicity, just return a JSON response indicating the application is healthy
     return jsonify(status='ok', message='Health check passed')
 
-@app.route('/test_connection')
-def test_connection():
-    ip = get_local_ip()
-    pod_name = socket.gethostname()
+
+@app.route('/readiness')
+def readiness_check():
+    global app_ready
+
+    if db is None or not db.connected:
+        return jsonify(status='error', message="Backend not connected to the database")
+
+    try:
+        db.query("SELECT 1")
+        app_ready = True
+        return jsonify(status='ok', message='Readiness check passed')
+
+    except Exception as e:
+        app_ready = False
+        return jsonify(status='error', message=f"Readiness check failed. Error connecting to database: {str(e)}"), 500
+
+
+@app.route('/get_users')
+def get_users():
+    global app_ready
+    if not app_ready:
+        return jsonify(error='Application not ready'), 500
     result = db.query("SELECT * FROM sample_table")
 
     return jsonify(
-        ip=ip,
-        pod_name=pod_name,
         result=result
     )
 
