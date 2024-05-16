@@ -79,8 +79,8 @@ def health_check():
 
 @app.route('/test_backend_connection')
 def test_backend_connection():
-    backend_host = os.environ.get("BACKEND_HOST", "NOT FOUND")
-    backend_port = os.environ.get("BACKEND_PORT", "NOT FOUND")
+    backend_host = os.environ.get("BACKEND_INTERNAL_SERVICEHOST", "NOT FOUND")
+    backend_port = os.environ.get("BACKEND_INTERNAL_SERVICE_PORT", "NOT FOUND")
     url = f"http://{backend_host}:{backend_port}/"
 
     try:
@@ -96,7 +96,4 @@ def test_backend_connection():
         return jsonify({'error': str(e)}), 500
 
 if __name__ == '__main__':
-    for key, value in os.environ.items():
-        print(f'{key}: {value}')
-    print(f"BACKEND_INTERNAL_SERVICE_HOST: {os.environ.get("BACKEND_INTERNAL_SERVICE_HOST", "NOT FOUND")}")
     app.run(debug=True, host='0.0.0.0', port=5000)
