@@ -33,6 +33,16 @@ def simulate_health_check():
         health_check_failed = not health_check_failed
         flip_count += 1
 
+def connect_to_database():
+    """
+    Function to connect to the database if not connected
+    """
+    while True:
+        if db.db_connection is None or db.db_connection.closed:
+            try:
+                db.connect()
+            except Exception as e:
+                logger.error(f"Error connecting to database: {e}")
 
 def get_local_ip():
     try:
@@ -108,5 +118,6 @@ else:
 
 if __name__ == '__main__':
     db = DataBase(DataBase.getCredentials())
-    db.connect()
+    thread = threading.Thread(target=connect_to_database)
+    thread.start()
     app.run(debug=True, host='0.0.0.0', port=5000)
