@@ -56,29 +56,45 @@ else:
     thread.start()
 
 @app.route('/')
-def hello():
+def base():
     ip = get_local_ip()
     pod_name = socket.gethostname()
     return jsonify(
         ip=ip,
-        pod_name=pod_name,
-        test_secret=os.environ.get("TEST_SECRET", "NOT FOUND"),
-        literal_secret=os.environ.get("LITERAL_SECRET", "NOT FOUND")
+        pod_name=pod_name
     )
+
 
 @app.route('/health')
 def health_check():
-    global health_check_failed
-
-    # Check if the health check has failed
-    if health_check_failed:
-        abort(500, description='Health check failing')
-
     # For simplicity, just return a JSON response indicating the application is healthy
     return jsonify(status='ok', message='Health check passed')
 
+
+@app.route('/readiness')
+def health_check():
+    backend_host = os.environ.get("BACKEND_INTERNAL_SERVICE_HOST", "NOT FOUND")
+    backend_port = os.environ.get("BACKEND_INTERNAL_SERVICE_PORT", "NOT FOUND")
+    url = f"http://{backend_host}:{backend_port}/"
+
+    try:
+        response = requests.get(url, timeout=5)
+
+        if response.status_code == 200:
+            return jsonify(status='ok', message='Health check passed')
+        else:
+            return jsonify({'error': 'Backend could not be reached'}), 500
+
+    except requests.exceptions.RequestException as e:
+        return jsonify({'error': f"Error connecting to backend: {str(e)}"}), 500
+
+
 @app.route('/test_backend_connection')
 def test_backend_connection():
+    # using the _SERVICE_HOST environment variable is one option
+    # one drawback to this is the service must be created first
+    # if you use backend-internal.default instead, the dns lookup makes it so the service 
+    # does not need to be created first
     backend_host = os.environ.get("BACKEND_INTERNAL_SERVICE_HOST", "NOT FOUND")
     backend_port = os.environ.get("BACKEND_INTERNAL_SERVICE_PORT", "NOT FOUND")
     url = f"http://{backend_host}:{backend_port}/"
