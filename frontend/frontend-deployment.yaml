@@ -43,7 +43,7 @@ spec:
             path: /health
             port: 5000
           periodSeconds: 1
-          failureThreshold: 90
+          failureThreshold: 30
         volumeMounts:
         - name: repo-volume
           mountPath: /repo

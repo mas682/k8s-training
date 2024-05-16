@@ -41,7 +41,6 @@ class DataBase:
     
     def connect(self, max_attempts: int = 20, sleep_time: int = 5) -> None:
         attempts = 0
-        sleep_time = 5
         while attempts < max_attempts:
             try:
                 self.db_connection = psycopg2.connect(

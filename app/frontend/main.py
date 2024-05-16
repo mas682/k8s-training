@@ -15,6 +15,7 @@ logger = logging.getLogger(__name__)
 # Flag to indicate whether the health check should fail
 health_check_failed = True
 app_ready = False
+readiness_failures = 0
 
 
 def get_local_ip():
@@ -72,12 +73,16 @@ def base():
 @app.route('/health')
 def health_check():
     # For simplicity, just return a JSON response indicating the application is healthy
+    global readiness_failures
+    if readiness_failures > 30:
+        return jsonify(status='error', message='Readiness check failed too many times'), 500
     return jsonify(status='ok', message='Health check passed')
 
 
 @app.route('/readiness')
 def readiness_check():
     global app_ready
+    global readiness_failures
     backend_host = os.environ.get("BACKEND_INTERNAL_SERVICE_HOST", "NOT FOUND")
     backend_port = os.environ.get("BACKEND_INTERNAL_SERVICE_PORT", "NOT FOUND")
     url = f"http://{backend_host}:{backend_port}/"
@@ -87,13 +92,16 @@ def readiness_check():
 
         if response.status_code == 200:
             app_ready = True
+            readiness_failures = 0
             return jsonify(status='ok', message='Readiness check passed')
         else:
             app_ready = False
+            readiness_failures += 1
             return jsonify(status='error', message=f'Readiness check failed. Backend responded with a {response.status_code} status'), 500
 
     except requests.exceptions.RequestException as e:
         app_ready = False
+        readiness_failures += 1
         return jsonify(status='error', message=f"Readiness check failed. Error connecting to backend: {str(e)}"), 500
 
 

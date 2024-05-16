@@ -88,7 +88,7 @@ def readiness_check():
     global app_ready
 
     if db is None or not db.connected:
-        return jsonify(status='error', message="Backend not connected to the database")
+        return jsonify(status='error', message="Backend not connected to the database"), 500
 
     try:
         db.query("SELECT 1")
