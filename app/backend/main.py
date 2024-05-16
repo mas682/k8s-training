@@ -38,6 +38,7 @@ def connect_to_database():
     """
     Function to connect to the database if not connected
     """
+    global db_connection_tries
     while True:
         if db.db_connection is None or db.db_connection.closed:
             try:
@@ -75,6 +76,7 @@ def base():
 
 @app.route('/health')
 def health_check():
+    global db_connection_tries
     connected = None if db is None or db.db_connection is None else not db.db_connection.closed
     if db_connection_tries > 2:
         return jsonify(status='error', message='Failed to connect to database', db_connnected=connected), 500
