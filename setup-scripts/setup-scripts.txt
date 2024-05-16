@@ -25,13 +25,14 @@ database-pvc:PersistentVolumeClaim:false:database/volumes/database-pvc.yaml:defa
 #* network polices
 default-ingress:networkpolicy:false:networking/default-ingress-policy.yaml:default
 backend-ingress:networkpolicy:false:backend/networking/backend-ingress-policy.yaml:default
+database-ingress:networkpolicy:false:database/networking/database-ingress-policy.yaml:default
 
 
 #* deployments
 #* this deployment assumes database-config, db-creds, database-pv, and database-pvc exist
 database:Deployment:false:database/database-deployment.yaml:default
-# backend:Deployment:false:backend/backend-deployment.yaml:default
-# frontend:Deployment:false:frontend/frontend-deployment.yaml:default
+backend:Deployment:false:backend/backend-deployment.yaml:default
+frontend:Deployment:false:frontend/frontend-deployment.yaml:default
 
 #* jobs
 # this job assumes the database exists, database-config, db-creds, git-config

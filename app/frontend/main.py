@@ -96,4 +96,6 @@ def test_backend_connection():
         return jsonify({'error': str(e)}), 500
 
 if __name__ == '__main__':
+    for key, value in os.environ.items():
+        print(f'{key}: {value}')
     app.run(debug=True, host='0.0.0.0', port=5000)

@@ -2,8 +2,13 @@ apiVersion: batch/v1
 kind: Job
 metadata:
   name: db-init
+  labels:
+    app: db-init
 spec:
   template:
+    metadata:
+      labels:
+        app: db-init
     spec:
       restartPolicy: Never
       containers:
