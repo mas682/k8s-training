@@ -72,7 +72,7 @@ def health_check():
 
 
 @app.route('/readiness')
-def health_check():
+def readiness_check():
     backend_host = os.environ.get("BACKEND_INTERNAL_SERVICE_HOST", "NOT FOUND")
     backend_port = os.environ.get("BACKEND_INTERNAL_SERVICE_PORT", "NOT FOUND")
     url = f"http://{backend_host}:{backend_port}/"
