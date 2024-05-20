@@ -5,17 +5,23 @@ metadata:
     app: frontend
   name: frontend
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       app: frontend
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: "50%"
+      maxSurge: "50%"
   template:
     metadata:
       labels:
         app: frontend
     spec:
       containers:
-      - image: python:latest
+      # changed this from python:latest to test rollouts
+      - image: python:3.12
         name: frontend
         command: ["sh", "-c", "cd /repo && pip install --no-cache-dir -r app/requirements.txt && python -m app.frontend.main"]
         imagePullPolicy: IfNotPresent

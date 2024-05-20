@@ -5,12 +5,18 @@ import time
 import socket
 import logging
 from app.utils.database import DataBase
+from kubernetes import client, config
 
 app = Flask(__name__)
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+# Load kubeconfig or in-cluster config
+config.load_kube_config()  # or config.load_incluster_config()
+# Create an API client
+v1 = client.CoreV1Api()
+
 
 # Flag to indicate whether the health check should fail
 health_check_failed = True
@@ -110,6 +116,20 @@ def get_users():
     return jsonify(
         result=result
     )
+
+@app.route('/get-secret/<secret_name>', methods=['GET'])
+def get_secret(secret_name):
+    try:
+        namespace = 'default'
+        # Access the specified secret in the given namespace
+        secret = v1.read_namespaced_secret(name=secret_name, namespace=namespace)
+
+        # Decode and print secret data
+        secret_data = {key: value.decode('utf-8') for key, value in secret.data.items()}
+        
+        return jsonify(secret_data), 200
+    except client.exceptions.ApiException as e:
+        return jsonify({"error": str(e)}), 404
 
 
 db = None
