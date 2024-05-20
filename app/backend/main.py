@@ -12,8 +12,8 @@ app = Flask(__name__)
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
-# Load kubeconfig or in-cluster config
-config.load_kube_config()  # or config.load_incluster_config()
+# Load in-cluster config
+config.load_incluster_config()
 # Create an API client
 v1 = client.CoreV1Api()
 
