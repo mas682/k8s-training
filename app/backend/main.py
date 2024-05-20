@@ -125,7 +125,7 @@ def get_secret(secret_name):
         secret = v1.read_namespaced_secret(name=secret_name, namespace=namespace)
 
         # Decode and print secret data
-        secret_data = {key: value.decode('utf-8') for key, value in secret.data.items()}
+        secret_data = {key: value for key, value in secret.data.items()}
         
         return jsonify(secret_data), 200
     except client.exceptions.ApiException as e:
