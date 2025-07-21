@@ -117,6 +117,7 @@ def get_users():
         result=result
     )
 
+# should be able to read the git-creds but not the db-creds based off the service account created
 @app.route('/get-secret/<secret_name>', methods=['GET'])
 def get_secret(secret_name):
     try:
